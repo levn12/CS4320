@@ -29,12 +29,14 @@ CSV_PATH = "ames_curated.csv"
 SEED = 4320  # required seed (so everyone gets the same split)
 
 TARGET_COL = "saleprice"
+# This column is a direct function of the target, so it would leak info.
+LEAKAGE_COL = "pricepersf" 
 
 # You should decide which columns are safe/appropriate to use as model inputs.
 # (Hint: identifiers are usually not appropriate.)
 
 # Define columns to be excluded in my preproccessing.
-POSSIBLE_EXCLUDES = ["pid", TARGET_COL]
+POSSIBLE_EXCLUDES = ["pid", TARGET_COL, LEAKAGE_COL]
 
 
 def split_indices(n: int, seed: int, train_frac: float = 0.70, val_frac: float = 0.15):
@@ -66,7 +68,7 @@ def main():
     y_val   = val_df[TARGET_COL].to_numpy(dtype=float)
     y_test  = test_df[TARGET_COL].to_numpy(dtype=float)
 
-    # 3) Choose feature columns (drop target + other columns you believe should be excluded)
+    # 3) Choose feature columns (drop target + other columns that should be excluded)
     # Use x to remind us it's an input
     X_train = train_df.drop(columns=[c for c in POSSIBLE_EXCLUDES if c in train_df.columns])
     X_val   = val_df.drop(columns=[c for c in POSSIBLE_EXCLUDES if c in val_df.columns])
@@ -100,10 +102,20 @@ def main():
     X_num_means = X_train[numeric_cols].mean()
     X_num_stds = X_train[numeric_cols].std()
 
+    # Also calculate mean and std for y_train.
+    y_mean = y_train.mean()
+    y_std = y_train.std()
+
     # Then apply to X_train / X_val / X_test using the formula: (X - mean) / std
     X_train[numeric_cols] = (X_train[numeric_cols] - X_num_means) / (X_num_stds)
     X_val[numeric_cols] = (X_val[numeric_cols] - X_num_means) / (X_num_stds)
     X_test[numeric_cols] = (X_test[numeric_cols] - X_num_means) / (X_num_stds)
+
+    # Also scale y_train, y_val, y_test using the same approach
+    # for optional use in modeling, depending on the model chosen for implementation.
+    y_train_scaled = (y_train - y_mean) / y_std
+    y_val_scaled = (y_val - y_mean) / y_std
+    y_test_scaled = (y_test - y_mean) / y_std
 
     # 7) FIT one-hot categories on TRAIN ONLY
     # Build a list of categories from X_train.
@@ -144,8 +156,13 @@ def main():
     print("Categorical cols:", cat_cols)
     print(X_train.head())
 
-    # print(X_train_np.shape, y_train.shape)
+    # Export new X_train + y_train to CSV
+    # We can concatenate X_train and y_train back into a single df for easier export.
 
+    train_processed = pd.DataFrame(X_train_np, columns=X_train.columns)
+    train_processed['y'] = y_train
+    train_processed['y_scaled'] = y_train_scaled
+    train_processed.to_csv('train_processed_data.csv', index=False)
 
 if __name__ == "__main__":
     main()

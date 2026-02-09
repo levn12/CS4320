@@ -40,6 +40,11 @@ def main():
     print("Test completed successfully! ✓")
     print("=" * 60)
 
+    # Export data as a csv and save in current directory
+    output_csv = "electrical_fault_data.csv"
+    df.to_csv(output_csv, index=False)
+    print(f"Dataset exported to {output_csv}")
+
 
 if __name__ == "__main__":
     main()
