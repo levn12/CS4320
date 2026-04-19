@@ -1,0 +1,199 @@
+{
+  "dataset_rows": 7861,
+  "random_state": 4320,
+  "primary_validation_metric": "balanced_accuracy",
+  "class_names": [
+    "0000",
+    "0110",
+    "0111",
+    "1001",
+    "1011",
+    "1111"
+  ],
+  "split_sizes": {
+    "train": 4716,
+    "validation": 1572,
+    "test": 1573
+  },
+  "split_class_counts": {
+    "train": {
+      "0000": 1419,
+      "0110": 602,
+      "0111": 658,
+      "1001": 677,
+      "1011": 680,
+      "1111": 680
+    },
+    "validation": {
+      "0000": 473,
+      "0110": 201,
+      "0111": 219,
+      "1001": 226,
+      "1011": 227,
+      "1111": 226
+    },
+    "test": {
+      "0000": 473,
+      "0110": 201,
+      "0111": 219,
+      "1001": 226,
+      "1011": 227,
+      "1111": 227
+    }
+  },
+  "default_random_forest": {
+    "validation_metrics": {
+      "accuracy": 0.8657760814249363,
+      "balanced_accuracy": 0.8418999096109605,
+      "precision": 0.842250996347123,
+      "recall": 0.8418999096109605,
+      "f1": 0.842063604969293
+    },
+    "oob_accuracy": 0.8583545377438507
+  },
+  "best_model_by_validation_metric": "kNN",
+  "models": {
+    "kNN": {
+      "best_params": {
+        "n_neighbors": 1,
+        "weights": "uniform",
+        "p": 2
+      },
+      "train_metrics": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "validation_metrics": {
+        "accuracy": 0.8695928753180662,
+        "balanced_accuracy": 0.8464319708400557,
+        "precision": 0.8467781897190942,
+        "recall": 0.8464319708400557,
+        "f1": 0.8465550928680884
+      },
+      "test_metrics": {
+        "accuracy": 0.8887476160203432,
+        "balanced_accuracy": 0.8691157005221773,
+        "precision": 0.8692978770455552,
+        "recall": 0.8691157005221773,
+        "f1": 0.8690732086764923
+      }
+    },
+    "RBF SVM": {
+      "best_params": {
+        "C": 100.0,
+        "gamma": "scale",
+        "class_weight": "None"
+      },
+      "train_metrics": {
+        "accuracy": 0.8738337574215437,
+        "balanced_accuracy": 0.8510137256287966,
+        "precision": 0.8536775261723278,
+        "recall": 0.8510137256287966,
+        "f1": 0.8486686554115282
+      },
+      "validation_metrics": {
+        "accuracy": 0.8562340966921119,
+        "balanced_accuracy": 0.8300107451890303,
+        "precision": 0.8316927196451998,
+        "recall": 0.8300107451890303,
+        "f1": 0.8284861591353575
+      },
+      "test_metrics": {
+        "accuracy": 0.8537825810553084,
+        "balanced_accuracy": 0.8274562656313909,
+        "precision": 0.827388517989541,
+        "recall": 0.8274562656313909,
+        "f1": 0.825366825076041
+      }
+    },
+    "Random Forest": {
+      "best_params": {
+        "n_estimators": 400,
+        "max_depth": null,
+        "max_features": "sqrt",
+        "min_samples_leaf": 1
+      },
+      "train_metrics": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "validation_metrics": {
+        "accuracy": 0.8657760814249363,
+        "balanced_accuracy": 0.8418763377301938,
+        "precision": 0.842237077640156,
+        "recall": 0.8418763377301938,
+        "f1": 0.8420289080072768
+      },
+      "test_metrics": {
+        "accuracy": 0.8792116973935156,
+        "balanced_accuracy": 0.8579244865528132,
+        "precision": 0.8570946268932889,
+        "recall": 0.8579244865528132,
+        "f1": 0.857483044915832
+      },
+      "oob_accuracy_best_tuned": 0.8598388464800678
+    },
+    "MLP": {
+      "best_params": {
+        "hidden_dims": [
+          128,
+          64
+        ],
+        "dropout_rates": [
+          0.1,
+          0.0
+        ],
+        "learning_rate": 0.0005,
+        "weight_decay": 0.0001,
+        "best_epoch": 45
+      },
+      "train_metrics": {
+        "accuracy": 0.863019508057676,
+        "balanced_accuracy": 0.840087712965961,
+        "precision": 0.8385687771506672,
+        "recall": 0.840087712965961,
+        "f1": 0.8331792382884359
+      },
+      "validation_metrics": {
+        "accuracy": 0.8587786259541985,
+        "balanced_accuracy": 0.8347494973811146,
+        "precision": 0.8326687505502531,
+        "recall": 0.8347494973811146,
+        "f1": 0.8266142115411167
+      },
+      "test_metrics": {
+        "accuracy": 0.8448823903369358,
+        "balanced_accuracy": 0.8172309053969786,
+        "precision": 0.8138304171849283,
+        "recall": 0.8172309053969786,
+        "f1": 0.8143181830568283
+      }
+    }
+  },
+  "saved_files": {
+    "validation_search_csvs": [
+      "knn_validation_search_results.csv",
+      "rbf_svm_validation_search_results.csv",
+      "random_forest_validation_search_results.csv",
+      "mlp_validation_search_results.csv"
+    ],
+    "summary_tables": [
+      "validation_comparison_table.csv",
+      "final_test_comparison_table.csv",
+      "model_summary_train_val_test_metrics.csv"
+    ],
+    "plots": [
+      "knn_validation_plot.png",
+      "rbf_svm_validation_plot.png",
+      "random_forest_validation_plot.png",
+      "mlp_training_history.png",
+      "final_test_comparison_plot.png"
+    ]
+  }
+}
