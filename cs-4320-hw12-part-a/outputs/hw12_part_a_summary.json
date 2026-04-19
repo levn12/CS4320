@@ -1,0 +1,50 @@
+{
+  "config": {
+    "random_seed": 4320,
+    "validation_fraction": 0.2,
+    "batch_size": 128,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0005,
+    "epochs": 18,
+    "num_workers": 0
+  },
+  "dataset_source": "https://www.kaggle.com/datasets/zalando-research/fashionmnist",
+  "device": "cpu",
+  "split_sizes": {
+    "train": 48000,
+    "validation": 12000,
+    "test": 10000
+  },
+  "normalization": {
+    "train_mean": 0.285589337348938,
+    "train_std": 0.3525518476963043
+  },
+  "batch_info": {
+    "image_batch_shape": [
+      128,
+      1,
+      28,
+      28
+    ],
+    "label_batch_shape": [
+      128
+    ],
+    "image_dtype": "torch.float32",
+    "label_dtype": "torch.int64",
+    "pixel_min_after_normalization": -0.810063362121582,
+    "pixel_max_after_normalization": 2.0263988971710205
+  },
+  "best_epoch": 13,
+  "best_validation_loss": 0.20571970518430074,
+  "best_validation_accuracy": 0.931,
+  "checkpoint_validation_loss": 0.20571970518430074,
+  "checkpoint_validation_accuracy": 0.931,
+  "reloaded_validation_loss": 0.20571970518430074,
+  "reloaded_validation_accuracy": 0.931,
+  "validation_reload_loss_match": true,
+  "validation_reload_accuracy_match": true,
+  "test_loss": 0.20303909757360816,
+  "test_accuracy": 0.9322,
+  "training_interpretation": "Training loss decreased over time, which shows the model learned meaningful image patterns. Validation loss was lowest around epoch 6, while the best validation accuracy was 0.9310. This suggests the model improved steadily without severe overfitting, so using the best validation checkpoint was a good choice.",
+  "resource_reflection": "Most training time was spent in model compute (1936.25s) rather than data loading (55.54s), which is expected for a CNN running on cpu. A realistic debugging issue in this assignment is a shape mismatch caused by forgetting to reshape the 784 pixel columns into 1x28x28 images. To diagnose that problem, I would print one batch shape from the dataloader and then check the tensor sizes after each convolution and pooling layer. Another possible issue is validation accuracy stalling, which I would investigate by checking normalization, learning rate, and whether the model is beginning to overfit."
+}
