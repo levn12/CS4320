@@ -20,6 +20,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
@@ -400,7 +401,7 @@ def plot_class_balance(labels, path):
     return counts
 
 
-def plot_pca(feature_frame, labels, title_prefix, scatter_path, variance_path):
+def plot_pca(feature_frame, labels, scatter_2d_path, scatter_3d_path, variance_path, title_prefix):
     # Standardize first so PCA is driven by structure, not by raw scale differences.
     scaler = StandardScaler()
     scaled = scaler.fit_transform(feature_frame)
@@ -430,10 +431,38 @@ def plot_pca(feature_frame, labels, title_prefix, scatter_path, variance_path):
     ax.set_ylabel(f"PC2 ({pca_2d.explained_variance_ratio_[1] * 100:.2f}% variance)")
     ax.grid(True, alpha=0.25)
     ax.legend(title="Fault pattern", ncol=2, fontsize=9)
-    fig.savefig(scatter_path, dpi=220, bbox_inches="tight")
+    fig.savefig(scatter_2d_path, dpi=220, bbox_inches="tight")
     plt.close(fig)
 
-    # Second PCA figure: explained-variance view.
+    # Second PCA figure: 3D scatter in the first three principal components.
+    pca_3d = PCA(n_components=min(3, len(feature_frame.columns)), random_state=RANDOM_STATE)
+    coords_3d = pca_3d.fit_transform(scaled)
+    scatter_3d_df = pd.DataFrame(coords_3d, columns=[f"PC{i}" for i in range(1, pca_3d.n_components_ + 1)], index=feature_frame.index)
+    scatter_3d_df, sampled_labels_3d = sample_for_scatter(scatter_3d_df, labels)
+
+    fig = plt.figure(figsize=(9, 7), constrained_layout=True)
+    ax = fig.add_subplot(111, projection="3d")
+    for label in unique_labels:
+        mask = sampled_labels_3d == label
+        ax.scatter(
+            scatter_3d_df.loc[mask, "PC1"],
+            scatter_3d_df.loc[mask, "PC2"],
+            scatter_3d_df.loc[mask, "PC3"],
+            s=16,
+            alpha=0.60,
+            color=colors[label],
+            label=label,
+        )
+
+    ax.set_title(f"{title_prefix} PCA 3D scatter by fault pattern")
+    ax.set_xlabel(f"PC1 ({pca_3d.explained_variance_ratio_[0] * 100:.2f}% variance)")
+    ax.set_ylabel(f"PC2 ({pca_3d.explained_variance_ratio_[1] * 100:.2f}% variance)")
+    ax.set_zlabel(f"PC3 ({pca_3d.explained_variance_ratio_[2] * 100:.2f}% variance)")
+    ax.legend(title="Fault pattern", ncol=2, fontsize=8)
+    fig.savefig(scatter_3d_path, dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+    # Third PCA figure: explained-variance view.
     pca_full = PCA(n_components=min(len(feature_frame.columns), 10), random_state=RANDOM_STATE)
     pca_full.fit(scaled)
     explained = pca_full.explained_variance_ratio_
@@ -617,16 +646,18 @@ def main():
     raw_pca_summary = plot_pca(
         raw_features,
         labels,
-        "Raw feature",
         plots_dir / "raw_pca_scatter.png",
+        plots_dir / "raw_pca_3d_scatter.png",
         plots_dir / "raw_pca_explained_variance.png",
+        "Raw feature",
     )
     proxy_pca_summary = plot_pca(
         proxy_features,
         labels,
-        "Proxy feature",
         plots_dir / "proxy_pca_scatter.png",
+        plots_dir / "proxy_pca_3d_scatter.png",
         plots_dir / "proxy_pca_explained_variance.png",
+        "Proxy feature",
     )
 
     # 4. Create a leakage-safe split:
