@@ -1,0 +1,17 @@
+feature,feature_group,importance
+abs_current_sum_signed,proxy,0.3199121947495946
+z_proxy_3ph,proxy,0.09743135274384729
+current_vector_mag,proxy,0.09071935442637262
+z_proxy_A,proxy,0.08221611513161117
+voltage_vector_mag,proxy,0.07860777368419716
+current_unbalance,proxy,0.06369296668733024
+z_proxy_B,proxy,0.05840129960910635
+z_proxy_C,proxy,0.03894006652402311
+abs_instantaneous_power_proxy,proxy,0.03602473860438996
+Ib,raw,0.02850430526174554
+Ic,raw,0.025073304659683635
+Va,raw,0.024620266728204394
+Vb,raw,0.01686880673884802
+Ia,raw,0.01317910090703862
+voltage_unbalance,proxy,0.012980607065081208
+Vc,raw,0.012827746478925994

@@ -1,0 +1,74 @@
+{
+  "data_path": "C:\\Users\\levid\\School_Programming\\CS4320\\cs-4320-capstone\\electrical_fault_data.csv",
+  "random_state": 4320,
+  "primary_metric": "balanced_accuracy",
+  "feature_representation": "raw_plus_proxy",
+  "best_params": {
+    "n_estimators": 300,
+    "max_depth": null,
+    "max_features": "sqrt",
+    "min_samples_leaf": 1,
+    "min_samples_split": 2,
+    "class_weight": "balanced_subsample"
+  },
+  "best_cv_row": {
+    "class_weight": "balanced_subsample",
+    "max_depth": null,
+    "max_features": "sqrt",
+    "min_samples_leaf": 1,
+    "min_samples_split": 2,
+    "n_estimators": 300,
+    "train_balanced_accuracy": 1.0,
+    "oob_score": 0.996607294317218,
+    "val_accuracy": 0.9974554707379135,
+    "val_balanced_accuracy": 0.9970631424375918,
+    "val_precision_macro": 0.9970823794958609,
+    "val_recall_macro": 0.9970631424375918,
+    "val_f1_macro": 0.9970516998331568
+  },
+  "forest_structure": {
+    "n_trees": 300,
+    "tree_depth_min": 10,
+    "tree_depth_median": 15.0,
+    "tree_depth_mean": 15.476666666666667,
+    "tree_depth_max": 25,
+    "leaf_count_min": 63,
+    "leaf_count_median": 108.0,
+    "leaf_count_mean": 111.86,
+    "leaf_count_max": 183
+  },
+  "train_metrics": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "validation_metrics": {
+    "accuracy": 0.9974554707379135,
+    "balanced_accuracy": 0.9970631424375918,
+    "precision": 0.9970823794958609,
+    "recall": 0.9970631424375918,
+    "f1": 0.9970516998331568
+  },
+  "test_metrics": {
+    "accuracy": 0.9968213604577241,
+    "balanced_accuracy": 0.9963289280469897,
+    "precision": 0.9963177913305791,
+    "recall": 0.9963289280469897,
+    "f1": 0.9962923560952003
+  },
+  "oob_score": 0.9980916030534351,
+  "raw_pca_summary": {
+    "pc1_variance_ratio": 0.3074134574989278,
+    "pc2_variance_ratio": 0.2569870385919402,
+    "cumulative_variance_first_2": 0.564400496090868,
+    "cumulative_variance_first_5": 1.0
+  },
+  "proxy_pca_summary": {
+    "pc1_variance_ratio": 0.29707462650744737,
+    "pc2_variance_ratio": 0.19316169646938058,
+    "cumulative_variance_first_2": 0.49023632297682795,
+    "cumulative_variance_first_5": 0.7987001293978286
+  }
+}

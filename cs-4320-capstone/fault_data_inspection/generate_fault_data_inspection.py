@@ -21,8 +21,7 @@ matplotlib.use("Agg")
 
 
 BASE_DIR = Path(__file__).resolve().parent
-CAPSTONE_DIR = BASE_DIR.parent
-DATA_PATH = CAPSTONE_DIR / "electrical_fault_data.csv"
+DATA_PATH = BASE_DIR.parent / "electrical_fault_data.csv"
 README_PATH = BASE_DIR / "data_readme.md"
 
 FAULT_COLS = ["G", "C", "B", "A"]
