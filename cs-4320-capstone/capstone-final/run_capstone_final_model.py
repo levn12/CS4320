@@ -78,6 +78,7 @@ TEST_SIZE = 0.20
 VALIDATION_SIZE_WITHIN_TRAIN_VAL = 0.25
 EPSILON = 1e-6
 MAX_SCATTER_POINTS = 3000
+TREE_GROWTH_STEPS = [5, 10, 20, 40, 60, 80, 100, 150, 200, 250, 300]
 
 SCREENING_GRID = [
     {
@@ -286,6 +287,23 @@ def make_model_pipeline(params):
                 ),
             ),
         ]
+    )
+
+
+def make_warm_start_forest(params, n_estimators):
+    # Build a warm-start forest so we can watch performance as trees are added.
+    return RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=params["max_depth"],
+        max_features=params["max_features"],
+        min_samples_leaf=params["min_samples_leaf"],
+        min_samples_split=params["min_samples_split"],
+        class_weight=params["class_weight"],
+        bootstrap=True,
+        oob_score=True,
+        warm_start=True,
+        random_state=RANDOM_STATE,
+        n_jobs=-1,
     )
 
 
@@ -532,6 +550,73 @@ def plot_top_validation_results(results_df, path, top_k=10):
     plt.close(fig)
 
 
+def build_tree_growth_curve(X_train, y_train, X_val, y_val, best_params):
+    # Random Forests do not optimize an epoch-wise loss, so use a tree-growth
+    # curve as the closest analogue to a training curve.
+    max_trees = int(best_params["n_estimators"])
+    checkpoints = [step for step in TREE_GROWTH_STEPS if step <= max_trees]
+    if checkpoints[-1] != max_trees:
+        checkpoints.append(max_trees)
+
+    imputer = SimpleImputer(strategy="median")
+    X_train_imp = imputer.fit_transform(X_train)
+    X_val_imp = imputer.transform(X_val)
+
+    forest = make_warm_start_forest(best_params, checkpoints[0])
+    rows = []
+    for tree_count in checkpoints:
+        forest.set_params(n_estimators=tree_count)
+        forest.fit(X_train_imp, y_train)
+
+        train_pred = forest.predict(X_train_imp)
+        val_pred = forest.predict(X_val_imp)
+        rows.append(
+            {
+                "n_estimators": int(tree_count),
+                "train_balanced_accuracy": float(balanced_accuracy_score(y_train, train_pred)),
+                "validation_balanced_accuracy": float(balanced_accuracy_score(y_val, val_pred)),
+                "oob_score": float(forest.oob_score_),
+                "oob_error": float(1.0 - forest.oob_score_),
+            }
+        )
+
+    return pd.DataFrame(rows)
+
+
+def plot_tree_growth_curve(curve_df, path):
+    # Show how train, validation, and OOB performance evolve as trees are added.
+    fig, ax = plt.subplots(figsize=(9, 5.5), constrained_layout=True)
+    ax.plot(
+        curve_df["n_estimators"],
+        curve_df["train_balanced_accuracy"],
+        marker="o",
+        linewidth=2.0,
+        label="Train balanced accuracy",
+    )
+    ax.plot(
+        curve_df["n_estimators"],
+        curve_df["validation_balanced_accuracy"],
+        marker="o",
+        linewidth=2.0,
+        label="Validation balanced accuracy",
+    )
+    ax.plot(
+        curve_df["n_estimators"],
+        curve_df["oob_score"],
+        marker="o",
+        linewidth=2.0,
+        label="OOB score",
+    )
+    ax.set_title("Random Forest tree-growth curve")
+    ax.set_xlabel("Number of trees")
+    ax.set_ylabel("Score")
+    ax.set_ylim(0.0, 1.02)
+    ax.grid(True, alpha=0.25)
+    ax.legend()
+    fig.savefig(path, dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+
 def plot_confusion(confusion_df, title, path, fmt):
     # Make a heatmap with values written inside each confusion-matrix cell.
     fig, ax = plt.subplots(figsize=(8, 6), constrained_layout=True)
@@ -741,6 +826,11 @@ def main():
         "min_samples_split": int(best_row["min_samples_split"]),
         "class_weight": best_row["class_weight"],
     }
+
+    # Build a Random-Forest-friendly training curve using the validation split.
+    tree_growth_df = build_tree_growth_curve(X_train, y_train, X_val, y_val, best_params)
+    save_dataframe(tree_growth_df, tables_dir / "final_rf_tree_growth_curve.csv")
+    plot_tree_growth_curve(tree_growth_df, plots_dir / "final_rf_tree_growth_curve.png")
 
     # 7. Fit two models:
     # - final_model on train+validation for the final test evaluation
